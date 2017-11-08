@@ -21,3 +21,12 @@ attrValue(false).
   :- character(X), attribute(A).
 
 #show hasAttr/3.
+
+% clue specification - name, information gained
+
+% all possible facts learnable in any mystery from twoEmptyWhiskeys
+clue(twoEmptyWhiskeys, hasAttr(culprit, drinker, true)).
+clue(twoEmptyWhiskeys, hasAttr(culprit, knewVictim, true)).
+
+% all possible facts learnable in any mystery from receipt
+clue(receipt, hasAttr).
