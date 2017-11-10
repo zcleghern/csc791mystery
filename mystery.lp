@@ -47,8 +47,6 @@ attrValue(false).
 :-cast(victim).
 4{gameattribute(X): attribute(X)}4.
 
-
-
 %For each member of the cast, give them a value for each of the attributes.
 1 {hasAttr(X,A,V) : attrValue(V)} 1
   :- cast(X), gameattribute(A).
@@ -62,18 +60,37 @@ hasAttr(murderer,A,V) :- cast(X),hasAttr(X,A,V),murderer(X).
 hasAttr(victim,A,V) :- cast(X),hasAttr(X,A,V),victim(X).
 
 
-#show hasAttr/3.
-<<<<<<< HEAD
+%#show hasAttr/3.
+%#show murderer/1.
+%#show victim/1.
 
 % clue specification - name, information gained
 
 % all possible facts learnable in any mystery from twoEmptyWhiskeys
-clue(twoEmptyWhiskeys, hasAttr(culprit, drinker, true)).
-clue(twoEmptyWhiskeys, hasAttr(culprit, knewVictim, true)).
+clueChoice(twoEmptyWhiskeys).
+canLearn(twoEmptyWhiskeys, hasAttr(murderer, drinker, true)).
+canLearn(twoEmptyWhiskeys, hasAttr(murderer, knewVictim, true)).
 
 % all possible facts learnable in any mystery from receipt
-clue(receipt, hasAttr).
-=======
-#show murderer/1.
-#show victim/1.
->>>>>>> 1775ddc11452682a81e95a4ea17f0e065660a9fb
+clueChoice(receipt).
+canLearn(receipt, hasAttr(murderer, boughtWhiskey, true)).
+canLearn(receipt, hasAttr(murderer, boughtCigarettes, true)).
+
+% choose a set of clues
+2{ clue(X) : clueChoice(X) }2.
+
+%#show clue/1.
+
+% choose what information is learned from each clue
+1 { learn(receipt, Y) : canLearn(X, Y)} 2
+  :- clue(X).
+
+#show learn/2.
+
+% action specification
+
+% clues obtainable by looking at the body
+action(lookBody).
+
+% clues obtainable by digging through the trash
+action(digTrash).
