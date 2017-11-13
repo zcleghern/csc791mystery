@@ -82,7 +82,7 @@ canLearn(receipt, hasAttr(murderer, boughtCigarettes, true)).
 %#show clue/1.
 
 % choose what information is learned from each clue
-1 { learn(receipt, Y) : canLearn(X, Y)} 2
+1 { learn(X, Y) : canLearn(X, Y)} 2
   :- clue(X).
 
 #show learn/2.
@@ -90,7 +90,17 @@ canLearn(receipt, hasAttr(murderer, boughtCigarettes, true)).
 % action specification
 
 % clues obtainable by looking at the body
-action(lookBody).
+actionChoice(lookBody).
+canFind(lookBody, twoEmptyWhiskeys).
 
 % clues obtainable by digging through the trash
-action(digTrash).
+actionChoice(digTrash).
+
+% choose a set of applications
+1 { action(X) : actionChoice(X) } 1.
+
+% choose what clues are obtained from which action
+1 { find(X,Y) : clue(Y)} 2
+  :- action(X).
+
+#show find/2.
