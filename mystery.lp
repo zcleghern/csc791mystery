@@ -36,6 +36,18 @@ attribute(man).
 attribute(smoker).
 attribute(drinker).
 attribute(knewVictim).
+attribute(isLeftHanded).
+attribute(ownsGun).
+attribute(tall).
+attribute(fat).
+attribute(hasWound).
+attribute(wearsGlasses).
+attribute(hasCane).
+attribute(frequentsBar).
+attribute(shopCustomer).
+attribute(redHair).
+
+
 
 %attributes can either be true or false
 attrValue(true).
