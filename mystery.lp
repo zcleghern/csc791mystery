@@ -100,7 +100,7 @@ canLearn(receipt, hasAttr(murderer, smoker, true)).
  
 %Talking to people learns you stuff 
   learn(talkedTo(Char,Attr),hasAttr(Char,Attr,Val)):-
-  cast(Char),hasAttr(Char,Attr,Val).
+  cast(Char),hasAttr(Char,Attr,Val),clue(X),learn(X,hasAttr(murderer,Attr,true)).
   
 %% If we select a set of clues that include attributes we did not select, halt.
 
