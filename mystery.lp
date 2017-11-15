@@ -85,8 +85,8 @@ canLearn(twoEmptyWhiskeys, hasAttr(murderer, knewVictim, true)).
 
 % all possible facts learnable in any mystery from receipt
 clueChoice(receipt).
-canLearn(receipt, hasAttr(murderer, boughtWhiskey, true)).
-canLearn(receipt, hasAttr(murderer, boughtCigarettes, true)).
+canLearn(receipt, hasAttr(murderer, drinker, true)).
+canLearn(receipt, hasAttr(murderer, smoker, true)).
 
 % choose a set of clues
 2{ clue(X) : clueChoice(X) }2.
@@ -104,15 +104,22 @@ canLearn(receipt, hasAttr(murderer, boughtCigarettes, true)).
 % clues obtainable by looking at the body
 actionChoice(lookBody).
 canFind(lookBody, twoEmptyWhiskeys).
+canFind(lookBody,receipt).
 
 % clues obtainable by digging through the trash
 actionChoice(digTrash).
+canFind(digTrash, twoEmptyWhiskeys).
+canFind(digTrash,receipt).
+
 
 % choose a set of applications
 1 { action(X) : actionChoice(X) } 1.
 
 % choose what clues are obtained from which action
 1 { find(X,Y) : clue(Y)} 2
-  :- action(X).
+  :- action(X),canFind(X,Y).
+  
+% Can't find the same clue through two different actions.
+:- clue(Y),action(X),action(Z),dif(X,Z),find(X,Y),find(Z,Y).
 
 #show find/2.
