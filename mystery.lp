@@ -78,6 +78,7 @@ hasAttr(victim,A,V) :- cast(X),hasAttr(X,A,V),victim(X).
 
 % clue specification - name, information gained
 
+
 % all possible facts learnable in any mystery from twoEmptyWhiskeys
 clueChoice(twoEmptyWhiskeys).
 canLearn(twoEmptyWhiskeys, hasAttr(murderer, drinker, true)).
@@ -96,6 +97,15 @@ canLearn(receipt, hasAttr(murderer, smoker, true)).
 % choose what information is learned from each clue
 1 { learn(X, Y) : canLearn(X, Y)} 2
   :- clue(X).
+ 
+%Talking to people learns you stuff 
+  learn(talkedTo(Char,Attr),hasAttr(Char,Attr,Val)):-
+  cast(Char),hasAttr(Char,Attr,Val).
+  
+%% If we select a set of clues that include attributes we did not select, halt.
+
+%% If we cannot use the set of 
+
 
 #show learn/2.
 
@@ -123,3 +133,4 @@ canFind(digTrash,receipt).
 :- clue(Y),action(X),action(Z),dif(X,Z),find(X,Y),find(Z,Y).
 
 #show find/2.
+
