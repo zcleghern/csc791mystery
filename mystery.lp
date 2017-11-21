@@ -121,7 +121,6 @@ actionChoice(digTrash).
 canFind(digTrash, twoEmptyWhiskeys).
 canFind(digTrash,receipt).
 
-
 % choose a set of applications
 1 { action(X) : actionChoice(X) } 1.
 
