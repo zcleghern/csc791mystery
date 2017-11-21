@@ -38,6 +38,7 @@ attribute(drinker).
 attribute(knewVictim).
 attribute(isLeftHanded).
 attribute(ownsGun).
+attribute(ownsKnife).
 attribute(tall).
 attribute(fat).
 attribute(hasWound).
@@ -47,7 +48,8 @@ attribute(frequentsBar).
 attribute(shopCustomer).
 attribute(redHair).
 attribute(inLoveWithVictim).
-
+attribute(wantsInheritance).
+attribute(hasKey).
 
 
 %attributes can either be true or false
@@ -79,12 +81,48 @@ hasAttr(victim,A,V) :- cast(X),hasAttr(X,A,V),victim(X).
 
 % clue specification - name, information gained
 
+clueChoice(diary).
+canLearn(diary,hasAttr(murderer,knewVictim,true)).
+%canLearn(diary,hasAttr(X,knewVictim,true)).
+canLearn(diary,hasAttr(murderer,wantsInheritance,true)).
+
+
+clueChoice(will).
+canLearn(will, hasAttr(murderer,wantsInheritance,true)).
+canLearn(will,hasAttr(murderer,knewVictim,true)).
+
+
+clueChoice(gunShotWound).
+canLearn(gunShotWound, hasAttr(murderer,ownsGun,true)).
+canLearn(gunShotWound, hasAttr(murderer,tall,true)).
+canLearn(gunShotWound,hasAttr(murderer,tall,false)).
+canLearn(gunShotWound, hasAttr(murderer,isLeftHanded,true)).
+canLearn(gunShotWound, hasAttr(murderer,isLeftHanded,false)).
+
+clueCoice(lipstick).
+canLearn(lipstick,hasAttr(murderer,man,false)).
+canLearn(lipstick,hasAttr(murderer,smoker,true)).
+
+
+clueChoice(stabWound).
+canLearn(gunShotWound, hasAttr(murderer,ownsKnife,true)).
+canLearn(gunShotWound, hasAttr(murderer,tall,true)).
+canLearn(gunShotWound,hasAttr(murderer,tall,false)).
+canLearn(gunShotWound, hasAttr(murderer,isLeftHanded,true)).
+canLearn(gunShotWound, hasAttr(murderer,isLeftHanded,false)).
+
+
+clueChoice(redHair).
+canLearn(murderer,hasAttr(murderer,redHair,true)).
+
 clueChoice(loveLetter).
 canLearn(loveLetter,hasAttr(murderer,inLoveWithVictim,true)).
 
 clueChoice(revolver).
 canLearn(revolver,hasAttr(murderer,ownsGun,true)).
 
+clueChoice(key).
+canLearn(key,hasAttr(victim,hasKey,true)).
 
 % all possible facts learnable in any mystery from twoEmptyWhiskeys
 clueChoice(twoEmptyWhiskeys).
@@ -117,9 +155,15 @@ canLearn(receipt, hasAttr(murderer, smoker, true)).
 %% If we select a set of clues that include attributes we did not select, halt.
 
 %% If we cannot use the set of 
-
+actionChoice(digThroughFireplace).
+canFind(digThroughFireplace,loveLetter).
+canFind(digThroughFireplace,will).
+canFind(digThroughFireplace,diary).
 
 #show learn/2.
+action(inspectRug).
+canFind(inspectRug,redHair).
+canFind(inspectRug,cigarette).
 
 % action specification
 actionChoice(unlockingBox).
@@ -132,12 +176,30 @@ actionChoice(lookBody).
 canFind(lookBody, twoEmptyWhiskeys).
 canFind(lookBody,receipt).
 canFind(lookBody,cigarette).
+canFind(lookBody,stabWound).
+canFind(lookBody,gunShotWound).
+canFind(lookBody,lipstick).
+canFind(lookBody,redHair).
+
 
 % clues obtainable by digging through the trash
 actionChoice(digTrash).
 canFind(digTrash, twoEmptyWhiskeys).
 canFind(digTrash,receipt).
-canFind(lookBody,cigarette).
+canFind(digTrash,cigarette).
+canFind(digTrash,lipstick).
+canFind(digTrash,diary).
+
+action(inspectDesk).
+canFind(inspectDesk, diary).
+canFind(inspectDesk, will).
+canFind(inspectDesk, lipstick).
+canFind(inspectDesk, receipt).
+
+
+action(lookAtBookshelf).
+canFind(lookAtBookshelf, diary).
+canFind(lookAtBookshelf, will).
 
 
 % choose a set of applications
