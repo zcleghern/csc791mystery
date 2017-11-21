@@ -196,6 +196,8 @@ canFind(inspectDesk, will).
 canFind(inspectDesk, lipstick).
 canFind(inspectDesk, receipt).
 
+action(unlockSafe).
+
 
 action(lookAtBookshelf).
 canFind(lookAtBookshelf, diary).
