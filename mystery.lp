@@ -46,6 +46,7 @@ attribute(hasCane).
 attribute(frequentsBar).
 attribute(shopCustomer).
 attribute(redHair).
+attribute(inLoveWithVictim).
 
 
 
@@ -78,11 +79,22 @@ hasAttr(victim,A,V) :- cast(X),hasAttr(X,A,V),victim(X).
 
 % clue specification - name, information gained
 
+clueChoice(loveLetter).
+canLearn(loveLetter,hasAttr(murderer,inLoveWithVictim,true)).
+
+clueChoice(revolver).
+canLearn(revolver,hasAttr(murderer,ownsGun,true)).
+
 
 % all possible facts learnable in any mystery from twoEmptyWhiskeys
 clueChoice(twoEmptyWhiskeys).
 canLearn(twoEmptyWhiskeys, hasAttr(murderer, drinker, true)).
 canLearn(twoEmptyWhiskeys, hasAttr(murderer, knewVictim, true)).
+
+%
+clueChoice(cigaretteSmoke).
+canLearn(cigaretteSmoke, hasAttr(murderer,smoker,true)).
+
 
 % all possible facts learnable in any mystery from receipt
 clueChoice(receipt).
@@ -110,16 +122,22 @@ canLearn(receipt, hasAttr(murderer, smoker, true)).
 #show learn/2.
 
 % action specification
+actionChoice(unlockingBox).
+canFind(unlockingBox,revolver).
+canFind(unlockingBox,loveLetter).
+
 
 % clues obtainable by looking at the body
 actionChoice(lookBody).
 canFind(lookBody, twoEmptyWhiskeys).
 canFind(lookBody,receipt).
+canFind(lookBody,cigarette).
 
 % clues obtainable by digging through the trash
 actionChoice(digTrash).
 canFind(digTrash, twoEmptyWhiskeys).
 canFind(digTrash,receipt).
+canFind(lookBody,cigarette).
 
 
 % choose a set of applications
