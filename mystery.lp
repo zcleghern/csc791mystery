@@ -49,7 +49,6 @@ attribute(redHair).
 attribute(inLoveWithVictim).
 
 
-
 %attributes can either be true or false
 attrValue(true).
 attrValue(false).
@@ -125,7 +124,6 @@ canLearn(receipt, hasAttr(murderer, smoker, true)).
 actionChoice(unlockingBox).
 canFind(unlockingBox,revolver).
 canFind(unlockingBox,loveLetter).
-
 
 % clues obtainable by looking at the body
 actionChoice(lookBody).
