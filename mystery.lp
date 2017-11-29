@@ -233,7 +233,8 @@ canFind(unlockSafe,will).
 % choose a set of actions from action choices
 2 { action(X) : actionChoice(X) } 2.
 
-
+% Always find somethings from actions
+find(X,Y) :- action(X),willFind(X,Y).
 
 % choose what clues are obtained from which action
 1 { find(X,Y) : clue(Y)} 2
