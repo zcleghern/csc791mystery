@@ -33,7 +33,7 @@ character(murderer).
 character(victim).
 
 
-%List of currently implemented attributes.
+%List of 13 currently implemented attributes.
 attribute(drinker).
 attribute(hasKey).
 attribute(hasWound).
@@ -90,7 +90,7 @@ hasAttr(murderer,A,V) :- cast(X),hasAttr(X,A,V),murderer(X).
 hasAttr(victim,A,V) :- cast(X),hasAttr(X,A,V),victim(X).
 
 
-% clue specification - name, information gained
+% 12 clue specification - name, information gained
 
 %Cigarette Smoke
 clueChoice(cigaretteSmoke).
@@ -176,7 +176,7 @@ canLearn(will,hasAttr(murderer,knewVictim,true)).
 %:-learn(X,hasAttr(C,A,V), not hasAttr(C,A,V). %maybe don't need this? see choice rules
 
 
-% action specification
+% 8 action specification
 
 %Dig Through Fireplace
 actionChoice(digThroughFireplace).
