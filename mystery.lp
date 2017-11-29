@@ -94,7 +94,7 @@ hasAttr(victim,A,V) :- cast(X),hasAttr(X,A,V),victim(X).
 
 %Cigarette Smoke
 clueChoice(cigaretteSmoke).
-canLearn(cigaretteSmoke, hasAttr(murderer,smoker,true)).
+willLearn(cigaretteSmoke, hasAttr(murderer,smoker,true)).
 
 %Diary
 clueChoice(diary).
@@ -103,7 +103,7 @@ canLearn(diary,hasAttr(murderer,wantsInheritance,true)).
 
 %GunShotWound
 clueChoice(gunShotWound).
-canLearn(gunShotWound, hasAttr(murderer,ownsGun,true)).
+willLearn(gunShotWound, hasAttr(murderer,ownsGun,true)).
 canLearn(gunShotWound, hasAttr(murderer,tall,true)).
 canLearn(gunShotWound,hasAttr(murderer,tall,false)).
 canLearn(gunShotWound, hasAttr(murderer,isLeftHanded,true)).
@@ -111,16 +111,16 @@ canLearn(gunShotWound, hasAttr(murderer,isLeftHanded,false)).
 
 %Key
 clueChoice(key).
-canLearn(key,hasAttr(victim,hasKey,true)).
+willLearn(key,hasAttr(victim,hasKey,true)).
 
 %Lipstick
 clueCoice(lipstick).
-canLearn(lipstick,hasAttr(murderer,man,false)).
+willLearn(lipstick,hasAttr(murderer,man,false)).
 canLearn(lipstick,hasAttr(murderer,smoker,true)).
 
 %Love Letter
 clueChoice(loveLetter).
-canLearn(loveLetter,hasAttr(murderer,inLoveWithVictim,true)).
+willLearn(loveLetter,hasAttr(murderer,inLoveWithVictim,true)).
 
 %Receipt
 clueChoice(receipt).
@@ -129,15 +129,15 @@ canLearn(receipt, hasAttr(murderer, smoker, true)).
 
 %Red Hair
 clueChoice(redHair).
-canLearn(murderer,hasAttr(murderer,redHair,true)).
+willLearn(murderer,hasAttr(murderer,redHair,true)).
 
 %Revolver
 clueChoice(revolver).
-canLearn(revolver,hasAttr(murderer,ownsGun,true)).
+willLearn(revolver,hasAttr(murderer,ownsGun,true)).
 
 %Stabwound
 clueChoice(stabWound).
-canLearn(stabWound, hasAttr(murderer,ownsKnife,true)).
+willLearn(stabWound, hasAttr(murderer,ownsKnife,true)).
 canLearn(stabWound, hasAttr(murderer,tall,true)).
 canLearn(stabWound,hasAttr(murderer,tall,false)).
 canLearn(stabWound, hasAttr(murderer,isLeftHanded,true)).
@@ -145,8 +145,8 @@ canLearn(stabWound, hasAttr(murderer,isLeftHanded,false)).
 
 %Two Empty Whiskey
 clueChoice(twoEmptyWhiskeys).
-canLearn(twoEmptyWhiskeys, hasAttr(murderer, drinker, true)).
-canLearn(twoEmptyWhiskeys, hasAttr(murderer, knewVictim, true)).
+willLearn(twoEmptyWhiskeys, hasAttr(murderer, drinker, true)).
+willLearn(twoEmptyWhiskeys, hasAttr(murderer, knewVictim, true)).
 
 %Will
 clueChoice(will).
@@ -158,6 +158,8 @@ canLearn(will,hasAttr(murderer,knewVictim,true)).
 % choose a set of clues
 2{ clue(X) : clueChoice(X) }2.
 
+%Always learn some things
+learn(X,Y):- clue(X),willLearn(X,Y).
 
 % choose what information is learned from each clue
 1 { learn(X, Y) : canLearn(X, Y)} 2
