@@ -27,7 +27,6 @@ character(yolanda).
 character(zach).
 
 
-
 %special characters: One will be the murderer and one will be the victim.
 character(murderer).
 character(victim).
@@ -95,6 +94,11 @@ hasAttr(victim,A,V) :- cast(X),hasAttr(X,A,V),victim(X).
 %Cigarette Smoke
 clueChoice(cigaretteSmoke).
 willLearn(cigaretteSmoke, hasAttr(murderer,smoker,true)).
+
+%Cut out Face
+clueChoice(cutOutFace).
+willLearn(cutOutFace, hasAttr(murderer,knewVictim,true)).
+willLearn(cutOutFace,hasAttr(murderer,ownsKnife,true)).
 
 %Diary
 clueChoice(diary).
@@ -194,6 +198,11 @@ canFind(lookBody,cigarette).
 canFind(digTrash,lipstick).
 canFind(digTrash,diary).
 
+%Inspect Bust
+actionChoice(inspectBust).
+canFind(inspectBust, cigaretteSmoke).
+canFind(inspectBust, button).
+
 %Inspect Desk
 actionChoice(inspectDesk).
 canFind(inspectDesk, diary).
@@ -201,9 +210,14 @@ canFind(inspectDesk, will).
 canFind(inspectDesk, lipstick).
 canFind(inspectDesk, receipt).
 
+%Inspect Portrait
+actionChoice(inspectPortrait).
+canFind(inspectPortrait,cutOutFace).
+
 %Inspect Rug
 actionChoice(inspectRug).
 canFind(inspectRug,redHair).
+canFind(inspectRug,cigaretteSmoke).
 
 %Look at Bookshelf
 actionChoice(lookAtBookshelf).
@@ -219,6 +233,11 @@ canFind(lookBody,stabWound).
 canFind(lookBody,gunShotWound).
 canFind(lookBody,lipstick).
 canFind(lookBody,redHair).
+
+%Open Clock
+actionChoice(openClock).
+canFind(openClock,will).
+canFind(openClock,diary).
 
 %Unlock Box
 actionChoice(unlockingBox).
