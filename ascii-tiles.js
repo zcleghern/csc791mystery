@@ -29,8 +29,6 @@ function readFileAndDisplay(evt) {
   }
 }
 
-
-
 // UI stuff
 window.onload = function() {
 
@@ -104,7 +102,7 @@ function generate () {
   var {map, width, height, cast, attrs} = atoms_to_tables(atoms);
   var map_string = draw_map(map, width, height, cast);
 
-  return map_string + attrs;
+  return map_string + attrs  + "\n" + atoms_to_graph(atoms);
 }
 
 //converts atoms to tiles. Relevant atoms are cast/1, gameattribute/1, hasAttr/3
