@@ -113,7 +113,7 @@ canLearn(gunShotWound,hasAttr(murderer,tall,false)).
 canLearn(gunShotWound, hasAttr(murderer,isLeftHanded,true)).
 canLearn(gunShotWound, hasAttr(murderer,isLeftHanded,false)).
 
-%Key
+%Box Key
 clueChoice(key).
 willLearn(key,hasAttr(victim,hasKey,true)).
 
@@ -138,6 +138,9 @@ willLearn(murderer,hasAttr(murderer,redHair,true)).
 %Revolver
 clueChoice(revolver).
 willLearn(revolver,hasAttr(murderer,ownsGun,true)).
+
+%SafeCombination
+clueChoice(safeCombination).
 
 %Stabwound
 clueChoice(stabWound).
@@ -203,6 +206,11 @@ actionChoice(inspectBust).
 canFind(inspectBust, cigaretteSmoke).
 canFind(inspectBust, button).
 
+%Inspect Chair
+canFind(inspectChair, lipstick).
+canFind(inspectChair, receipt).
+canFind(inspectChair,redHair).
+
 %Inspect Desk
 actionChoice(inspectDesk).
 canFind(inspectDesk, diary).
@@ -210,9 +218,19 @@ canFind(inspectDesk, will).
 canFind(inspectDesk, lipstick).
 canFind(inspectDesk, receipt).
 
+%Inspect Drawer
+actionChoice(inspectDrawer).
+canFind(inspectDrawer, diary).
+canFind(inspectDrawer, will).
+
+%Inspect Picture
+actionChoice(inspectPicture).
+canFind(inspectPortrait,cutOutFace).
+
 %Inspect Portrait
 actionChoice(inspectPortrait).
 canFind(inspectPortrait,cutOutFace).
+canFind(inspectPortrait,safe).
 
 %Inspect Rug
 actionChoice(inspectRug).
@@ -243,16 +261,18 @@ canFind(openClock,diary).
 actionChoice(unlockingBox).
 canFind(unlockingBox,revolver).
 canFind(unlockingBox,loveLetter).
+clueReq(unlockingBox, boxKey).
+clueReq(unlockingBox, box).
 
 %Unlock Safe
 actionChoice(unlockSafe).
 canFind(unlockSafe,will).
-
+clueReq(unlockSafe, safeCombination).
 
 % choose a set of actions from action choices
 2 { action(X) : actionChoice(X) } 2.
 
-% Always find somethings from actions
+% Always find some things from actions
 find(X,Y) :- action(X),willFind(X,Y).
 
 % choose what clues are obtained from which action
