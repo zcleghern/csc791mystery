@@ -27,9 +27,8 @@ character(yolanda).
 character(zach).
 
 
-%special characters: One will be the murderer and one will be the victim.
+%special character: one character is the murderer
 character(murderer).
-character(victim).
 
 
 %List of 13 currently implemented attributes.
@@ -57,65 +56,55 @@ attrValue(true).
 attrValue(false).
 
 
-%Choose 7 characters and 4 attributes to work with
-7{cast(X): character(X)}7.
+%Choose characters and attributes to work with
+8{cast(X): character(X)}8.
 
-%same up here
-:- not cast(abby).
-:- not cast(boris).
-:- not cast(chris).
-:- not cast(duncan).
-:- not cast(ellie).
-:- not cast(frank).
-:- not cast(gina).
-
-%Do not choose the murderer or the victim as part of the cast. Those will be assigned later.
+%Do not choose the murderer as part of the cast. That will be assigned later.
 :-cast(murderer).
-:-cast(victim).
 
-%Choose 4 attributes to focus on in the game.
-4{gameattribute(X): attribute(X)}7.
-
+%Choose attributes to focus on in the game.
+8{gameattribute(X): attribute(X)}8.
 
 %For each member of the cast, give them a value for each of the attributes.
 1 {hasAttr(X,A,V) : attrValue(V)} 1
   :- cast(X), gameattribute(A).
 
-
-%Choose one person to be the murderer, and another to be victim
+%Choose one person to be the murderer
 1{murderer(X):cast(X)}1.
-1{victim(X):cast(X)}1.
 
 %There are no two people that have identical Values
 :- attribute(A), not gameattribute(A) ; cast(X), cast(Y), murderer(X), X!=Y, attrValue(V), hasAttr(X,A,V), hasAttr(Y,A,V).
 
-% We are using this to severly limit the search space
-:- not murderer(abby).
-:- not victim(boris).
-
-%The person cannot be both the victim and the murderer.
-:-victim(X),murderer(X).
-
-%The victim and murderer cast member have all of the attributes of the cast member associated with them
+%The murderer cast member have all of the attributes of the cast member associated with them
 hasAttr(murderer,A,V) :- cast(X),hasAttr(X,A,V),murderer(X).
-hasAttr(victim,A,V) :- cast(X),hasAttr(X,A,V),victim(X).
 
-
-% 13 clue specification - name, information gained
+% clue specification - name, information gained
 
 %Cigarette Smoke
 clueChoice(cigaretteSmoke).
 willLearn(cigaretteSmoke, hasAttr(murderer,smoker,true)).
 
+%Cigarette
+clueChoice(cigarette).
+willLearn(cigarette, hasAttr(murderer, smoker, true)).
+
 %Cut out Face
 clueChoice(cutOutFace).
 willLearn(cutOutFace, hasAttr(murderer,knewVictim,true)).
-%willLearn(cutOutFace,hasAttr(murderer,ownsKnife,true)).
+
+%Locked Diary
+clueChoice(lockedDiary).
+
+%Diary Key
+clueChoice(diaryKey).
+
+%Button
+clueChoice(button).
 
 %Diary
-clueChoice(diary).
-canLearn(diary,hasAttr(murderer,knewVictim,true)).
-canLearn(diary,hasAttr(murderer,wantsInheritance,true)).
+clueChoice(openedDiary).
+canLearn(openedDiary,hasAttr(murderer,knewVictim,true)).
+canLearn(openedDiary,hasAttr(murderer,wantsInheritance,true)).
 
 %GunShotWound
 clueChoice(gunShotWound).
@@ -151,6 +140,8 @@ canLearn(receipt, hasAttr(murderer, drinker, true)).
 canLearn(receipt, hasAttr(murderer, smoker, true)).
 canLearn(receipt, hasAttr(murderer, ownsGun, true)).
 
+%water
+clueChoice(water).
 
 %Hair Strand
 clueChoice(hairStrand).
@@ -166,7 +157,6 @@ clueChoice(safeCombination).
 
 %Stabwound
 clueChoice(stabWound).
-%willLearn(stabWound, hasAttr(murderer,ownsKnife,true)).
 canLearn(stabWound, hasAttr(murderer,tall,true)).
 canLearn(stabWound,hasAttr(murderer,tall,false)).
 canLearn(stabWound, hasAttr(murderer,isLeftHanded,true)).
@@ -185,18 +175,24 @@ canLearn(will,hasAttr(murderer,knewVictim,true)).
 %Ashes (fire has been put out)
 clueChoice(ashes).
 
+%Photograph
+clueChoice(photograph).
+
+%Safe
+clueChoice(safe).
+
 %Fire
 clueChoice(fire).
 
 % choose a set of clues
-3{ clue(X) : clueChoice(X) }13.
+3{ clue(X) : clueChoice(X) }17.
 
 
 %Always learn some things
 learn(X,Y):- clue(X),willLearn(X,Y).
 
 % choose what information is learned from each clue
-1 { learn(X, Y) : canLearn(X, Y)} 5
+1 { learn(X, Y) : canLearn(X, Y)} 2
   :- clue(X).
 
 
@@ -217,36 +213,51 @@ covered(A) :- gameattribute(A), learn(X, hasAttr(murderer, A, V)), clue(X).
 
 
 
-
-
-
-
 % 8 action specification
+
+%Look at Fireplace
+actionChoice(lookAtFireplace).
+canFind(lookAtFireplace, fire).
 
 %Put out fire
 actionChoice(putOutFire).
 willFind(putOutFire, ashes).
 clueReq(putOutFire, fire).
+clueReq(putOutFire, water).
 
 %Dig Through Fireplace
 actionChoice(digThroughFireplace).
 canFind(digThroughFireplace,loveLetter).
 canFind(digThroughFireplace,will).
-canFind(digThroughFireplace,diary).
+canFind(digThroughFireplace,glove).
+canFind(digThroughFireplace,lockedDiary).
+canFind(digThroughFireplace,openedDiary).
 clueReq(digThroughFireplace, ashes).
+
+%Open the Diary
+actionChoice(openDiary).
+canFind(openedDiary).
+canFind(safeCombination).
+clueReq(openDiary, lockedDiary).
+clueReq(openDiary, diaryKey).
 
 % Dig through Trash
 actionChoice(digTrash).
 canFind(digTrash, twoEmptyWhiskeys).
 canFind(digTrash,receipt).
-canFind(lookBody,cigarette).
+canFind(digTrash,cigarette).
 canFind(digTrash,lipstick).
-canFind(digTrash,diary).
+canFind(digTrash,lockedDiary).
 
 %Inspect Bust
 actionChoice(inspectBust).
 canFind(inspectBust, cigaretteSmoke).
 canFind(inspectBust, button).
+
+%Push button
+actionChoice(pushButton).
+canFind(pushButton, diaryKey).
+clueReq(pushButton, button).
 
 %Inspect Chair
 canFind(inspectChair, lipstick).
@@ -255,19 +266,22 @@ canFind(inspectChair, hairStrand).
 
 %Inspect Desk
 actionChoice(inspectDesk).
-canFind(inspectDesk, diary).
+canFind(inspectDesk, lockedDiary).
 canFind(inspectDesk, will).
 canFind(inspectDesk, lipstick).
 canFind(inspectDesk, receipt).
+canFind(inspectDesk, water).
+canFind(inspectDesk, photograph).
 
 %Inspect Drawer
 actionChoice(inspectDrawer).
-canFind(inspectDrawer, diary).
+canFind(inspectDrawer, lockedDiary).
 canFind(inspectDrawer, will).
 
 %Inspect Picture
 actionChoice(inspectPicture).
 canFind(inspectPortrait,cutOutFace).
+clueReq(photograph).
 
 %Inspect Portrait
 actionChoice(inspectPortrait).
@@ -281,8 +295,12 @@ canFind(inspectRug,cigaretteSmoke).
 
 %Look at Bookshelf
 actionChoice(lookAtBookshelf).
-canFind(lookAtBookshelf, diary).
+canFind(lookAtBookshelf, lockedDiary).
 canFind(lookAtBookshelf, will).
+
+%Look at table
+actionChoice(lookAtTable).
+canFind(lookAtTable, twoEmptyWhiskeys).
 
 %Look at Body
 actionChoice(lookBody).
@@ -297,7 +315,7 @@ canFind(lookBody,redHair).
 %Open Clock
 actionChoice(openClock).
 canFind(openClock,will).
-canFind(openClock,diary).
+canFind(openClock,lockedDiary).
 
 %Unlock Box
 actionChoice(unlockingBox).
@@ -314,16 +332,19 @@ clueReq(unlockSafe, safe).
 
 
 % choose a set of actions from action choices
-2 { action(X) : actionChoice(X) } 700.
+1 { action(X) : actionChoice(X) } 16.
 
 
 % Always find some things from actions
 find(X,Y) :- action(X),willFind(X,Y).
 
-% choose what clues are obtained from which action
-0 { find(X,Y) : clue(Y)} 500
-  :- action(X),canFind(X,Y).
+% choose what clues are obtained from which action - Changed this, see rule below
+%0 { find(X,Y) : clue(Y)} 17
+  %:- action(X),canFind(X,Y).
 
+% For each action, choose what clues are obtained
+0 { find(X,Y) : canFind(X,Y)} 2
+  :- action(X).
 
 % Can't find the same clue through two different actions.
 :- clue(Y),action(X),action(Z),X != Z, find(X,Y),find(Z,Y).
