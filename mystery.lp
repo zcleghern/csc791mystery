@@ -185,14 +185,14 @@ clueChoice(safe).
 clueChoice(fire).
 
 % choose a set of clues
-3{ clue(X) : clueChoice(X) }17.
+5{ clue(X) : clueChoice(X) }17.
 
 
 %Always learn some things
 learn(X,Y):- clue(X),willLearn(X,Y).
 
 % choose what information is learned from each clue
-1 { learn(X, Y) : canLearn(X, Y)} 2
+0 { learn(X, Y) : canLearn(X, Y)} 2
   :- clue(X).
 
 
@@ -236,8 +236,8 @@ clueReq(digThroughFireplace, ashes).
 
 %Open the Diary
 actionChoice(openDiary).
-canFind(openedDiary).
-canFind(safeCombination).
+canFind(openDiary, openedDiary).
+canFind(openDiary, safeCombination).
 clueReq(openDiary, lockedDiary).
 clueReq(openDiary, diaryKey).
 
@@ -280,8 +280,8 @@ canFind(inspectDrawer, will).
 
 %Inspect Picture
 actionChoice(inspectPicture).
-canFind(inspectPortrait,cutOutFace).
-clueReq(photograph).
+canFind(inspectPicture,cutOutFace).
+clueReq(inspectPicture, photograph).
 
 %Inspect Portrait
 actionChoice(inspectPortrait).
@@ -331,8 +331,9 @@ clueReq(unlockSafe, safeCombination).
 clueReq(unlockSafe, safe).
 
 
+
 % choose a set of actions from action choices
-1 { action(X) : actionChoice(X) } 16.
+11 { action(X) : actionChoice(X) } 16.
 
 
 % Always find some things from actions
@@ -350,8 +351,30 @@ find(X,Y) :- action(X),willFind(X,Y).
 :- clue(Y),action(X),action(Z),X != Z, find(X,Y),find(Z,Y).
 
 %If I generated an action that requires a clue but I did not generate that clue fail
-:- action(X),clueReq(X,Y), not clue(Y).
+:- action(X), clueReq(X,Y), not clue(Y).
 
 %Every clue we chose is findable
 findable(Y) :- clue(Y), action(X), find(X,Y).
 :- clue(Y), not findable(Y).
+
+:- not find(openDiary, safeCombination).
+:- not find(digTrash, receipt).
+:- not find(inspectChair, hairStrand).
+
+:- not clue(hairStrand).
+:- not clue(safe).
+:- not clue(receipt).
+:- not clue(water).
+:- not clue(fire).
+:- not clue(photograph).
+:- not clue(ashes).
+:- not clue(glove).
+:- not clue(lockedDiary).
+:- not clue(openedDiary).
+:- not clue(safeCombination).
+:- not clue(twoEmptyWhiskeys).
+:- not clue(button).
+:- not clue(diaryKey).
+:- not clue(will).
+:- not clue(cigaretteSmoke).
+:- not clue(stabWound).
