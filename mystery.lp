@@ -34,25 +34,23 @@ character(victim).
 
 %List of 13 currently implemented attributes.
 attribute(drinker).
-attribute(hasKey).
-attribute(hasWound).
 attribute(inLoveWithVictim).
 attribute(isLeftHanded).
 attribute(knewVictim).
 attribute(man).
 attribute(ownsGun).
-attribute(ownsKnife).
-attribute(redHair).
+%attribute(ownsKnife).
+attribute(lightHair).
 attribute(smoker).
 attribute(tall).
 attribute(wantsInheritance).
 
 %List of unimplemented attributes
-attribute(fat).
-attribute(hasCane).
-attribute(wearsGlasses).
-attribute(frequentsBar).
-attribute(shopCustomer).
+%attribute(fat).
+%attribute(hasCane).
+%attribute(wearsGlasses).
+%attribute(frequentsBar).
+%attribute(shopCustomer).
 
 %Attribute Values: Either True or False.
 attrValue(true).
@@ -62,34 +60,48 @@ attrValue(false).
 %Choose 7 characters and 4 attributes to work with
 7{cast(X): character(X)}7.
 
+%same up here
+:- not cast(abby).
+:- not cast(boris).
+:- not cast(chris).
+:- not cast(duncan).
+:- not cast(ellie).
+:- not cast(frank).
+:- not cast(gina).
+
 %Do not choose the murderer or the victim as part of the cast. Those will be assigned later.
 :-cast(murderer).
 :-cast(victim).
 
 %Choose 4 attributes to focus on in the game.
-4{gameattribute(X): attribute(X)}4.
+4{gameattribute(X): attribute(X)}7.
 
 
 %For each member of the cast, give them a value for each of the attributes.
 1 {hasAttr(X,A,V) : attrValue(V)} 1
   :- cast(X), gameattribute(A).
 
-  
+
 %Choose one person to be the murderer, and another to be victim
 1{murderer(X):cast(X)}1.
 1{victim(X):cast(X)}1.
 
+%There are no two people that have identical Values
+:- attribute(A), not gameattribute(A) ; cast(X), cast(Y), murderer(X), X!=Y, attrValue(V), hasAttr(X,A,V), hasAttr(Y,A,V).
+
+% We are using this to severly limit the search space
+:- not murderer(abby).
+:- not victim(boris).
 
 %The person cannot be both the victim and the murderer.
 :-victim(X),murderer(X).
-
 
 %The victim and murderer cast member have all of the attributes of the cast member associated with them
 hasAttr(murderer,A,V) :- cast(X),hasAttr(X,A,V),murderer(X).
 hasAttr(victim,A,V) :- cast(X),hasAttr(X,A,V),victim(X).
 
 
-% 12 clue specification - name, information gained
+% 13 clue specification - name, information gained
 
 %Cigarette Smoke
 clueChoice(cigaretteSmoke).
@@ -98,7 +110,7 @@ willLearn(cigaretteSmoke, hasAttr(murderer,smoker,true)).
 %Cut out Face
 clueChoice(cutOutFace).
 willLearn(cutOutFace, hasAttr(murderer,knewVictim,true)).
-willLearn(cutOutFace,hasAttr(murderer,ownsKnife,true)).
+%willLearn(cutOutFace,hasAttr(murderer,ownsKnife,true)).
 
 %Diary
 clueChoice(diary).
@@ -115,25 +127,35 @@ canLearn(gunShotWound, hasAttr(murderer,isLeftHanded,false)).
 
 %Box Key
 clueChoice(key).
-willLearn(key,hasAttr(victim,hasKey,true)).
 
 %Lipstick
 clueCoice(lipstick).
 willLearn(lipstick,hasAttr(murderer,man,false)).
 canLearn(lipstick,hasAttr(murderer,smoker,true)).
+canLearn(lipstick, hasAttr(murderer,smoker,false)).
+
+%Glove
+clueChoice(glove).
+canLearn(glove, hasAttr(murderer, man, true)).
+canLearn(glove, hasAttr(murderer, man, false)).
+canLearn(glove, hasAttr(murderer,smoker,true)).
+canLearn(glove, hasAttr(murderer,smoker,false)).
 
 %Love Letter
 clueChoice(loveLetter).
-willLearn(loveLetter,hasAttr(murderer,inLoveWithVictim,true)).
+canLearn(loveLetter,hasAttr(murderer,inLoveWithVictim,true)).
 
 %Receipt
 clueChoice(receipt).
 canLearn(receipt, hasAttr(murderer, drinker, true)).
 canLearn(receipt, hasAttr(murderer, smoker, true)).
+canLearn(receipt, hasAttr(murderer, ownsGun, true)).
 
-%Red Hair
-clueChoice(redHair).
-willLearn(murderer,hasAttr(murderer,redHair,true)).
+
+%Hair Strand
+clueChoice(hairStrand).
+canLearn(hairStrand,hasAttr(murderer,lightHair,true)).
+canLearn(hairStrand,hasAttr(murderer,lightHair,false)).
 
 %Revolver
 clueChoice(revolver).
@@ -144,13 +166,13 @@ clueChoice(safeCombination).
 
 %Stabwound
 clueChoice(stabWound).
-willLearn(stabWound, hasAttr(murderer,ownsKnife,true)).
+%willLearn(stabWound, hasAttr(murderer,ownsKnife,true)).
 canLearn(stabWound, hasAttr(murderer,tall,true)).
 canLearn(stabWound,hasAttr(murderer,tall,false)).
 canLearn(stabWound, hasAttr(murderer,isLeftHanded,true)).
 canLearn(stabWound, hasAttr(murderer,isLeftHanded,false)).
 
-%Two Empty Whiskey
+%Two Empty Whiskey glasses
 clueChoice(twoEmptyWhiskeys).
 willLearn(twoEmptyWhiskeys, hasAttr(murderer, drinker, true)).
 willLearn(twoEmptyWhiskeys, hasAttr(murderer, knewVictim, true)).
@@ -160,38 +182,58 @@ clueChoice(will).
 canLearn(will, hasAttr(murderer,wantsInheritance,true)).
 canLearn(will,hasAttr(murderer,knewVictim,true)).
 
+%Ashes (fire has been put out)
+clueChoice(ashes).
 
+%Fire
+clueChoice(fire).
 
 % choose a set of clues
-2{ clue(X) : clueChoice(X) }2.
+3{ clue(X) : clueChoice(X) }13.
+
 
 %Always learn some things
 learn(X,Y):- clue(X),willLearn(X,Y).
 
 % choose what information is learned from each clue
-1 { learn(X, Y) : canLearn(X, Y)} 2
-
+1 { learn(X, Y) : canLearn(X, Y)} 5
   :- clue(X).
 
 
-
 %Talking to people once you know murderer has attribute allows you to learn these attributes
-  learn(talkedTo(Char,Attr),hasAttr(Char,Attr,Val)):-
-  cast(Char),hasAttr(Char,Attr,Val),clue(X),learn(X,hasAttr(murderer,Attr,true)).
-
+  %learn(talkedTo(Char,Attr),hasAttr(Char,Attr,Val)):-
+  %cast(Char),hasAttr(Char,Attr,Val),clue(X),learn(X,hasAttr(murderer,Attr,true)).
 
 
 %% If we select a set of clues that include attributes we did not select, halt.
-%:-learn(X,hasAttr(C,A,V), not hasAttr(C,A,V). %maybe don't need this? see choice rules
+:- clue(X), attribute(A), attrValue(V), not hasAttr(murderer,A,V), learn(X,hasAttr(murderer,A,V)).
+
+%% Ensure that what is learned from clues is not contradictory
+:- clue(X), clue(Y), cast(murderer), gameattribute(A), learn(X,hasAttr(murderer,A,false)), learn(Y,hasAttr(murderer,A,true)).
+
+%% Ensure that the set of attributes is covered by the set of clues
+covered(A) :- gameattribute(A), learn(X, hasAttr(murderer, A, V)), clue(X).
+:- gameattribute(A), not covered(A).
+
+
+
+
+
 
 
 % 8 action specification
+
+%Put out fire
+actionChoice(putOutFire).
+willFind(putOutFire, ashes).
+clueReq(putOutFire, fire).
 
 %Dig Through Fireplace
 actionChoice(digThroughFireplace).
 canFind(digThroughFireplace,loveLetter).
 canFind(digThroughFireplace,will).
 canFind(digThroughFireplace,diary).
+clueReq(digThroughFireplace, ashes).
 
 % Dig through Trash
 actionChoice(digTrash).
@@ -209,7 +251,7 @@ canFind(inspectBust, button).
 %Inspect Chair
 canFind(inspectChair, lipstick).
 canFind(inspectChair, receipt).
-canFind(inspectChair,redHair).
+canFind(inspectChair, hairStrand).
 
 %Inspect Desk
 actionChoice(inspectDesk).
@@ -234,7 +276,7 @@ canFind(inspectPortrait,safe).
 
 %Inspect Rug
 actionChoice(inspectRug).
-canFind(inspectRug,redHair).
+canFind(inspectRug,hairStrand).
 canFind(inspectRug,cigaretteSmoke).
 
 %Look at Bookshelf
@@ -268,18 +310,27 @@ clueReq(unlockingBox, box).
 actionChoice(unlockSafe).
 canFind(unlockSafe,will).
 clueReq(unlockSafe, safeCombination).
+clueReq(unlockSafe, safe).
+
 
 % choose a set of actions from action choices
-2 { action(X) : actionChoice(X) } 2.
+2 { action(X) : actionChoice(X) } 700.
+
 
 % Always find some things from actions
 find(X,Y) :- action(X),willFind(X,Y).
 
 % choose what clues are obtained from which action
-1 { find(X,Y) : clue(Y)} 2
+0 { find(X,Y) : clue(Y)} 500
   :- action(X),canFind(X,Y).
 
 
-
 % Can't find the same clue through two different actions.
-:- clue(Y),action(X),action(Z),dif(X,Z),find(X,Y),find(Z,Y).
+:- clue(Y),action(X),action(Z),X != Z, find(X,Y),find(Z,Y).
+
+%If I generated an action that requires a clue but I did not generate that clue fail
+:- action(X),clueReq(X,Y), not clue(Y).
+
+%Every clue we chose is findable
+findable(Y) :- clue(Y), action(X), find(X,Y).
+:- clue(Y), not findable(Y).
