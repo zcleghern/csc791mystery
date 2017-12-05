@@ -31,7 +31,7 @@ character(zach).
 character(murderer).
 
 
-%List of 13 currently implemented attributes.
+%List of 11 currently implemented attributes.
 attribute(drinker).
 attribute(inLoveWithVictim).
 attribute(isLeftHanded).
@@ -213,7 +213,7 @@ covered(A) :- gameattribute(A), learn(X, hasAttr(murderer, A, V)), clue(X).
 
 
 
-% 8 action specification
+% action specification
 
 %Look at Fireplace
 actionChoice(lookAtFireplace).
@@ -260,6 +260,7 @@ canFind(pushButton, diaryKey).
 clueReq(pushButton, button).
 
 %Inspect Chair
+actionChoice(inspectChair).
 canFind(inspectChair, lipstick).
 canFind(inspectChair, receipt).
 canFind(inspectChair, hairStrand).
@@ -356,25 +357,3 @@ find(X,Y) :- action(X),willFind(X,Y).
 %Every clue we chose is findable
 findable(Y) :- clue(Y), action(X), find(X,Y).
 :- clue(Y), not findable(Y).
-
-:- not find(openDiary, safeCombination).
-:- not find(digTrash, receipt).
-:- not find(inspectChair, hairStrand).
-
-:- not clue(hairStrand).
-:- not clue(safe).
-:- not clue(receipt).
-:- not clue(water).
-:- not clue(fire).
-:- not clue(photograph).
-:- not clue(ashes).
-:- not clue(glove).
-:- not clue(lockedDiary).
-:- not clue(openedDiary).
-:- not clue(safeCombination).
-:- not clue(twoEmptyWhiskeys).
-:- not clue(button).
-:- not clue(diaryKey).
-:- not clue(will).
-:- not clue(cigaretteSmoke).
-:- not clue(stabWound).

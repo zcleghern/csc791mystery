@@ -16,6 +16,7 @@ function atoms_to_graph(atoms) {
   const finds = atoms.filter(a => a.pred == "find").map(a => a.args);
   const clueReqs = atoms.filter(a => a.pred == "clueReq").map(a => a.args);
 
+
   graphStr += clues.map(a => "\"" + a + "\"").join(" ");
   graphStr += " }";
   return graphStr;
